@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Temperature and Humidity</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>DHT22 Sensor Readings</h1>
+
+    <div class="sensor-container">
+        <div class="sensor">
+            <h2>Inside Sensor</h2>
+            <p>Temperature: {{ temperature1 }} °C</p>
+            <p>Humidity: {{ humidity1 }} %</p>
+        </div>
+        <div class="sensor">
+            <h2>Outside Sensor</h2>
+            <p>Temperature: {{ temperature2 }} °C</p>
+            <p>Humidity: {{ humidity2 }} %</p>
+        </div>
+    </div>
+</body>
+</html>

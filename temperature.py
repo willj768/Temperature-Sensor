@@ -1,16 +1,25 @@
-import time
-import board
 import adafruit_dht
+import board
+import time
 
-dhtDevice = adafruit_dht.DHT22(board.D17)
+dhtDevice1 = adafruit_dht.DHT22(board.D17)
+dhtDevice2 = adafruit_dht.DHT22(board.D27)
 
-while True:
+def getSensorData():
+
     try:
-        temperature = dhtDevice.temperature
-        humidity = dhtDevice.humidity
-        print(f"Temp: {temperature:.1f} °C  Humidity: {humidity:.1f} %")
+        temperature1 = dhtDevice1.temperature
+        humidity1 = dhtDevice1.humidity
 
+        temperature2 = dhtDevice2.temperature
+        humidity2 = dhtDevice2.humidity
     except RuntimeError as error:
-        print(f"Reading error: {error}")
+        temperature1 = "Error"
+        humidity1 = "Error"
 
-    time.sleep(60)
+        temperature2 = "Error"
+        humidity2 = "Error"
+
+    time.sleep(2)
+
+    return temperature1, humidity1, temperature2, humidity2
