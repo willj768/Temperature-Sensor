@@ -20,5 +20,14 @@
             <p>Humidity: {{ humidity2 }} %</p>
         </div>
     </div>
+    <div class="graph-container">
+        <div class="graph">
+            <img src="{{ url_for('plotSensor1') }}" alt="Sensor 1 Graph" />
+        </div>
+        <div class="graph">
+            <img src="{{ url_for('plotSensor2') }}" alt="Sensor 2 Graph" />
+        </div>
+    </div>
+
 </body>
 </html>
