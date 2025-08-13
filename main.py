@@ -74,8 +74,8 @@ def collectAndLog():
             df.to_csv(csvFile, mode='a', header=not pd.io.common.file_exists(csvFile), index=False)
 
         df = pd.read_csv(csvFile)
-        if len(df) > 720:
-            df = df.tail(720)
+        if len(df) > 10080:
+            df = df.tail(10080)
             df.to_csv(csvFile, index=False)
 
         time.sleep(60)
@@ -89,7 +89,8 @@ def plotGraph():
         graphData = []
         now = datetime.datetime.now()
 
-        for i in range (1, 14):
+        for i in range (1, 30):
+            #update hours=i to hours=i*6 after 7 days of logs are collected
             timeStamp = now - datetime.timedelta(hours=i)
             timeStamp = timeStamp.replace(second=0, microsecond=0)
             data.append(timeStamp)
@@ -122,9 +123,13 @@ def plotSensor1():
 
     with dataLock:
         fig, ax1 = plt.subplots(figsize=(12, 6))
-        ax1.set_title('Inside: Temperature and Humidity Over the Last 12 Hours')
+        ax1.set_title('Inside: Temperature and Humidity Over the Last 7 Days')
         ax1.set_xlabel('Time')
-        ax1.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+
+        ax1.xaxis.set_major_locator(mdates.HourLocator(interval=12))
+        ax1.xaxis.set_major_formatter(mdates.DateFormatter('%b %d %H:%M'))
+        ax1.xaxis.set_minor_locator(mdates.HourLocator(interval=1))
+
         ax1.set_ylabel('Temperature (°C)', color='tab:red')
         ax1.plot(df.index, df['Temperature1'], color='tab:red', label='Temperature 1')
         ax1.tick_params(axis='y', labelcolor='tab:red')
@@ -156,9 +161,13 @@ def plotSensor2():
 
     with dataLock:
         fig, ax1 = plt.subplots(figsize=(12, 6))
-        ax1.set_title('Outside: Temperature and Humidity Over the Last 12 Hours')
+        ax1.set_title('Outside: Temperature and Humidity Over the Last 7 Days')
         ax1.set_xlabel('Time')
-        ax1.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+
+        ax1.xaxis.set_major_locator(mdates.HourLocator(interval=12))
+        ax1.xaxis.set_major_formatter(mdates.DateFormatter('%b %d %H:%M'))
+        ax1.xaxis.set_minor_locator(mdates.HourLocator(interval=1))
+
         ax1.set_ylabel('Temperature (°C)', color='tab:red')
         ax1.plot(df.index, df['Temperature2'], color='tab:red', label='Temperature 2')
         ax1.tick_params(axis='y', labelcolor='tab:red')
