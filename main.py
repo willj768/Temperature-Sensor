@@ -9,9 +9,22 @@ import matplotlib.pyplot as plt
 import io
 from flask import send_file
 import matplotlib.dates as mdates
+from gpiozero import OutputDevice
 
+time.sleep(2)
 
 app = Flask(__name__)
+
+PIN_PWR_OUTSIDE = 18 
+powerOutside = OutputDevice(PIN_PWR_OUTSIDE, active_high=True, initial_value=False)
+
+def powerOnOutside():
+    powerOutside.on()
+    time.sleep(2)
+
+def powerOffOutside():
+    powerOutside.off()
+    time.sleep(1)
 
 dhtDevice1 = adafruit_dht.DHT22(board.D17)
 dhtDevice2 = adafruit_dht.DHT22(board.D27)
@@ -41,17 +54,27 @@ def getSensorData():
         temperature1 = "Error"
         humidity1 = "Error"
 
+    powerOnOutside()
     try:
         temperature2 = dhtDevice2.temperature
         humidity2 = dhtDevice2.humidity
         print("[OUTSIDE WORKING]")
     except RuntimeError as error:
         print("[OUTSIDE ERROR]", error)
-        temperature2 = "Error"
-        humidity2 = "Error"
-
+        powerOffOutside()
+        time.sleep(1)
+        powerOnOutside()
+        try:
+            temperature2 = dhtDevice2.temperature
+            humidity2 = dhtDevice2.humidity
+            print("[OUTSIDE WORKING AFTER RESET]")
+        except RuntimeError as error2:
+            print("[OUTSIDE STILL ERROR]", error2)
+            temperature2 = "Error"
+            humidity2 = "Error"
 
     return temperature1, humidity1, temperature2, humidity2
+
 
 def collectAndLog():
     while True:
@@ -90,7 +113,6 @@ def plotGraph():
         now = datetime.datetime.now()
 
         for i in range (1, 30):
-            #update hours=i to hours=i*6 after 7 days of logs are collected
             timeStamp = now - datetime.timedelta(hours=i)
             timeStamp = timeStamp.replace(second=0, microsecond=0)
             data.append(timeStamp)
